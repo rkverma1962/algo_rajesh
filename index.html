@@ -1,0 +1,1304 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankNifty Trading Bot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        /* Modern Color Variables */
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3f37c9;
+            --secondary: #4cc9f0;
+            --success: #06d6a0;
+            --warning: #ffb703;
+            --danger: #e63946;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --gray-100: #e9ecef;
+            --gray-200: #dee2e6;
+            --gray-300: #ced4da;
+            --gray-600: #6c757d;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --shadow-inner: inset 0 2px 4px 0 rgba(0,0,0,0.06);
+        }
+
+        /* Modern Base Styles */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: var(--dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Import Inter Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        /* Navbar Enhancement */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.2s;
+            border-radius: 8px;
+            padding: 0.5rem 1rem !important;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            color: var(--primary) !important;
+        }
+
+        .nav-link.active {
+            color: var(--primary) !important;
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+
+        /* Main Container */
+        .main-container {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255,255,255,0.5);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modern Cards */
+        .data-box {
+            background: var(--white);
+            border: none;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 15px 0;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .data-box:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .data-box h4, .data-box h5 {
+            color: var(--dark);
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-box h4 i, .data-box h5 i {
+            color: var(--primary);
+            font-size: 1.4em;
+        }
+
+        /* Value Displays */
+        .value-highlight {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .value-highlight-small {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .metric-label {
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        /* Modern Buttons */
+        .btn-custom {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-custom:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: var(--primary);
+        }
+
+        .btn-custom-success {
+            background: linear-gradient(135deg, var(--success) 0%, #0bb5a0 100%);
+            color: white;
+        }
+
+        .btn-custom-success:hover {
+            color: white;
+            box-shadow: 0 8px 15px rgba(6, 214, 160, 0.3);
+        }
+
+        .btn-custom-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #d62828 100%);
+            color: white;
+        }
+
+        .btn-custom-danger:hover {
+            color: white;
+            box-shadow: 0 8px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-custom-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #f39c12 100%);
+            color: var(--dark);
+        }
+
+        .btn-custom-warning:hover {
+            color: var(--dark);
+            box-shadow: 0 8px 15px rgba(255, 183, 3, 0.3);
+        }
+
+        /* Status Badges Modern */
+        .badge-custom {
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, #e1f7f0 0%, #c7f0e3 100%);
+            color: #0f7b6b;
+            border: 1px solid rgba(6, 214, 160, 0.2);
+        }
+
+        .badge-warning {
+            background: linear-gradient(135deg, #fff3d6 0%, #ffe6b3 100%);
+            color: #b45f06;
+            border: 1px solid rgba(255, 183, 3, 0.2);
+        }
+
+        .badge-danger {
+            background: linear-gradient(135deg, #ffe6e8 0%, #ffd5d9 100%);
+            color: #b71c1c;
+            border: 1px solid rgba(230, 57, 70, 0.2);
+        }
+
+        .badge-info {
+            background: linear-gradient(135deg, #e1f0fa 0%, #c7e2f5 100%);
+            color: #0b5e8a;
+            border: 1px solid rgba(76, 201, 240, 0.2);
+        }
+
+        /* Progress Bar Enhancement */
+        .progress-bar-bg {
+            background: linear-gradient(90deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-inner);
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.1) 25%,
+                rgba(255,255,255,0.3) 50%,
+                rgba(255,255,255,0.1) 75%
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-fill.positive {
+            background: linear-gradient(90deg, var(--success) 0%, #0bb5a0 100%);
+        }
+
+        .progress-fill.negative {
+            background: linear-gradient(90deg, var(--danger) 0%, #d62828 100%);
+        }
+
+        /* Position Progress Bar */
+        .position-progress {
+            height: 8px;
+            background: linear-gradient(90deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: var(--shadow-inner);
+            margin: 15px 0;
+        }
+
+        .position-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--primary) 100%);
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .pnl-value {
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Log Area Enhancement */
+        .log-area {
+            background: #1a1c20;
+            border: none;
+            border-radius: 16px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-lg);
+            scroll-behavior: smooth;
+        }
+
+        .log-entry {
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-time {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-right: 15px;
+            font-weight: 500;
+        }
+
+        .log-success {
+            color: #06d6a0;
+            border-left-color: var(--success);
+        }
+
+        .log-danger {
+            color: #e63946;
+            border-left-color: var(--danger);
+        }
+
+        .log-warning {
+            color: #ffb703;
+            border-left-color: var(--warning);
+        }
+
+        .log-info {
+            color: #4cc9f0;
+            border-left-color: var(--secondary);
+        }
+
+        /* Modern Tables */
+        .table-custom {
+            background: transparent;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-custom thead {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 600;
+            color: var(--dark);
+            border: none;
+        }
+
+        .table-custom th {
+            padding: 15px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .table-custom td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+
+        .table-custom tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-custom tr:hover td {
+            background-color: rgba(67, 97, 238, 0.02);
+        }
+
+        /* Pulse Animation */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(67, 97, 238, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+        }
+
+        .progress-fill.pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Footer Enhancement */
+        .footer-note {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 15px 25px;
+            margin-top: 30px;
+            box-shadow: var(--shadow-md);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 20px;
+                margin-top: 15px;
+            }
+
+            .value-highlight {
+                font-size: 1.8rem;
+            }
+
+            .value-highlight-small {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Input Field Enhancement */
+        .config-input {
+            background: var(--white);
+            border: 2px solid var(--gray-100);
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .config-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+            outline: none;
+        }
+
+        /* Alert Enhancements */
+        .alert {
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: var(--shadow-md);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
+        <div class="container-fluid">
+            <span class="navbar-brand">
+                <i class="bi bi-graph-up-arrow"></i> BankNifty Options Trading Bot For Zerodha
+            </span>
+            <div class="navbar-nav ms-auto">
+                {% if session.access_token %}
+                <span class="nav-item me-3">
+                    <span class="badge badge-success fs-5"><i class="bi bi-check-circle-fill"></i> Authenticated</span>
+                </span>
+                <a href="{{ url_for('dashboard') }}" class="nav-link {% if action == 'dashboard' %}active fw-bold{% endif %}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link {% if action == 'login' %}active fw-bold{% endif %}">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="#setup" class="nav-link" onclick="showSetup()">
+                    <i class="bi bi-gear-fill"></i> Setup
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Alert Messages -->
+        {% if error %}
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-check-circle-fill"></i> {{ success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        <!-- Main Content Area -->
+        <div class="main-container" id="main-content">
+            {% if not api_key_set %}
+                <!-- Setup Form -->
+                <div id="setup-section">
+                    <h2 class="text-center mb-4"><i class="bi bi-gear-fill"></i> API Configuration</h2>
+                    <p class="text-muted text-center">Enter your Kite Connect API credentials to get started</p>
+                    <hr>
+
+                    <form id="setup-form" class="mt-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">API Key</label>
+                            <input type="text" class="form-control config-input"
+                                   id="api_key" placeholder="Enter your Kite API Key" required>
+                            <div class="form-text text-muted">Your Kite Connect API key</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">API Secret</label>
+                            <input type="password" class="form-control config-input"
+                                   id="api_secret" placeholder="Enter your Kite API Secret" required>
+                            <div class="form-text text-muted">Your Kite Connect API secret</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Redirect URL</label>
+                            <input type="text" class="form-control config-input"
+                                   value="{{ redirect_url }}" readonly disabled>
+                            <div class="form-text text-muted">Add this URL in your Kite app settings</div>
+                        </div>
+
+                        <hr>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-custom btn-lg">
+                                <i class="bi bi-save"></i> Save Configuration
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+                    <h5 class="mt-4"><i class="bi bi-question-circle"></i> How to get API credentials:</h5>
+                    <ol class="text-muted">
+                        <li>Go to <a href="https://kite.zerodha.com/connect" target="_blank" style="color: #0d6efd;">Kite Connect</a></li>
+                        <li>Create a new app or use existing</li>
+                        <li>Set redirect URL to: <code>{{ redirect_url }}</code></li>
+                        <li>Copy API Key and Secret</li>
+                    </ol>
+                </div>
+
+            {% elif action == 'login' %}
+                <!-- Login Page -->
+                <div class="text-center">
+                    <h2 class="mb-4"><i class="bi bi-shield-lock-fill"></i> Kite Login</h2>
+                    <hr>
+
+                    <p class="lead mb-4">Click the button below to login with your Kite account:</p>
+
+                    <a href="{{ login_url }}" class="btn btn-custom btn-lg" target="_blank">
+                        <i class="bi bi-box-arrow-in-right"></i> Login with Kite
+                    </a>
+
+                    <hr class="my-4">
+                    <p class="text-muted mt-3">
+                        After logging in, you'll be redirected to the authentication page automatically.
+                    </p>
+
+                    <div class="alert alert-info mt-4" style="background-color: #cff4fc; color: #055160;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <strong>Note:</strong> Make sure your redirect URL is set to:<br>
+                        <code>{{ redirect_url }}</code>
+                    </div>
+                </div>
+
+            {% elif action == 'dashboard' %}
+                <!-- Dashboard -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Market Data & Signal Strength Card -->
+                        <div class="data-box">
+                            <h4><i class="bi bi-graph-up"></i> Market Data & Signal Strength</h4>
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="metric-label">BANKNIFTY</div>
+                                    <div class="value-highlight" id="index-price">---</div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="metric-label">Signal</div>
+                                    <div class="value-highlight-small" id="signal-type">---</div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="metric-label">Direction</div>
+                                    <div class="value-highlight-small" id="signal-direction">---</div>
+                                </div>
+                            </div>
+
+                            <!-- Main Signal Strength Progress Bar -->
+                            <div class="mt-4">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="metric-label">COMBINED SIGNAL STRENGTH</span>
+                                    <span class="fw-bold" id="signal-percentage">0%</span>
+                                </div>
+                                <div class="progress-bar-bg" style="height: 30px; position: relative;">
+                                    <div id="signal-bar" class="progress-fill" style="width: 0%">
+                                        <span style="
+                                            position: absolute;
+                                            right: 10px;
+                                            top: 50%;
+                                            transform: translateY(-50%);
+                                            color: white;
+                                            font-weight: bold;
+                                            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+                                            z-index: 10;
+                                        " id="signal-bar-text">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Component Scores -->
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">EMA Score</small>
+                                        <small class="fw-bold" id="ema-score">0%</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div id="ema-score-bar" class="progress-bar bg-primary" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">RSI Score</small>
+                                        <small class="fw-bold" id="rsi-score">0%</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div id="rsi-score-bar" class="progress-bar bg-info" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Entry Threshold Indicator -->
+                            <div class="mt-3 p-2 bg-light rounded">
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle"></i>
+                                        Entry requires: <span id="entry-requirement">70%+ with directional confirmation</span>
+                                    </small>
+                                    <small class="fw-bold" id="entry-status">❌ No Entry</small>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <small class="text-muted">EMA(9): <span id="ema-fast" class="fw-bold">---</span></small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">EMA(21): <span id="ema-slow" class="fw-bold">---</span></small>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col-6">
+                                    <small class="text-muted">EMA Gap: <span id="ema-gap" class="fw-bold">---</span></small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">RSI(14): <span id="rsi-value" class="fw-bold">---</span></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Position Card -->
+                        <div class="data-box">
+                            <h4><i class="bi bi-briefcase-fill"></i> Active Position</h4>
+                            <div id="position-details">
+                                <p class="text-muted text-center my-4">No active position</p>
+                            </div>
+                        </div>
+
+                        <!-- Bot Logs -->
+                        <h5 class="mt-3"><i class="bi bi-terminal-fill"></i> Bot Logs</h5>
+                        <div id="log-area" class="log-area">
+                            <div class="text-muted text-center">Bot logs will appear here...</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Bot Control Card -->
+                        <div class="data-box">
+                            <h4><i class="bi bi-controller"></i> Bot Control</h4>
+                            <div class="text-center">
+                                <button id="start-bot" class="btn btn-custom btn-custom-success">
+                                    <i class="bi bi-play-fill"></i> Start Bot
+                                </button>
+                                <button id="stop-bot" class="btn btn-custom btn-custom-warning" disabled>
+                                    <i class="bi bi-stop-fill"></i> Stop Bot
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Statistics Card -->
+                        <div class="data-box">
+                            <h5><i class="bi bi-pie-chart-fill"></i> Statistics</h5>
+                            <table class="table table-sm table-custom">
+                                <tr>
+                                    <td>Trades Today:</td>
+                                    <td class="fw-bold"><span id="trade-count">0</span>/{{ config.max_trades }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Bot Uptime:</td>
+                                    <td class="fw-bold"><span id="uptime">---</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Status:</td>
+                                    <td><span id="bot-status" class="badge badge-warning">Stopped</span></td>
+                                </tr>
+                                <tr>
+                                    <td>WebSocket:</td>
+                                    <td><span id="ws-status" class="badge badge-danger">Disconnected</span></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Market Hours Card -->
+                        <div class="data-box">
+                            <h5><i class="bi bi-clock"></i> Market Hours</h5>
+                            <table class="table table-sm table-custom">
+                                <tr>
+                                    <td>Market:</td>
+                                    <td><span id="market-status">Checking...</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Trading:</td>
+                                    <td><span id="trading-status">---</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Current:</td>
+                                    <td><span id="current-time"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            {% else %}
+                <!-- Home Page -->
+                <div>
+                    <h1 class="text-center mb-4"><i class="bi bi-robot"></i> BankNifty Options Trading Bot For Zerodha</h1>
+                    <hr>
+
+                    <div class="alert alert-info" style="background-color: #cff4fc; color: #055160;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <strong>Automated Trading Bot</strong> using EMA crossover strategy with RSI filter
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="data-box">
+                                <h5><i class="bi bi-gear-fill"></i> Configuration</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success"></i> Index: BANKNIFTY</li>
+                                    <li><i class="bi bi-check-circle-fill text-success"></i> Quantity: 30</li>
+                                    <li><i class="bi bi-check-circle-fill text-success"></i> Gap: 100</li>
+                                    <li><i class="bi bi-check-circle-fill text-success"></i> SL: 10%</li>
+                                    <li><i class="bi bi-check-circle-fill text-success"></i> TP: 35%</li>
+                                    <li><i class="bi bi-check-circle-fill text-success"></i> Trailing SL: 10% / 8%</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="data-box">
+                                <h5><i class="bi bi-star-fill"></i> Features</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-lg text-success"></i> EMA Crossover (9/21)</li>
+                                    <li><i class="bi bi-check-lg text-success"></i> RSI Filter (14)</li>
+                                    <li><i class="bi bi-check-lg text-success"></i> Trailing Stop Loss</li>
+                                    <li><i class="bi bi-check-lg text-success"></i> Automatic Square-off</li>
+                                    <li><i class="bi bi-check-lg text-success"></i> Real-time WebSocket</li>
+                                    <li><i class="bi bi-check-lg text-success"></i> Max 5 trades per day</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="data-box">
+                                <h5><i class="bi bi-activity"></i> Status</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-circle-fill text-warning"></i> Bot: <span class="status-warning">Not Running</span></li>
+                                    <li>
+                                        <i class="bi bi-circle-fill {% if is_authenticated %}text-success{% else %}text-danger{% endif %}"></i>
+                                        Authentication:
+                                        {% if is_authenticated %}
+                                        <span class="status-active">✓ Authenticated</span>
+                                        {% else %}
+                                        <span class="status-danger">✗ Not Authenticated</span>
+                                        {% endif %}
+                                    </li>
+                                    <li><i class="bi bi-circle-fill" id="market-indicator"></i> Market: <span id="market-status-home">Checking...</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="text-center mt-4">
+                        {% if not is_authenticated %}
+                        <a href="{{ url_for('login') }}" class="btn btn-custom btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Start Trading
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-custom btn-lg">
+                            <i class="bi bi-speedometer2"></i> Go to Dashboard
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="footer-note">
+            <i class="bi bi-shield-check"></i> Secure connection | Market data updates every second
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Auto-check for existing token on page load
+        $(document).ready(function() {
+            // Check if we're on a page that should auto-redirect
+            const currentPath = window.location.pathname;
+            const allowedPaths = ['/', '/login', '/authenticate'];
+
+            // If we're on index or login page, check if already authenticated
+            if (allowedPaths.includes(currentPath)) {
+                $.get('/api/check_auth', function(data) {
+                    if (data.authenticated) {
+                        window.location.href = '/dashboard';
+                    }
+                }).fail(function() {
+                    // Silently fail, user stays on current page
+                });
+            }
+        });
+
+        // Setup form handling
+        $('#setup-form').submit(function(e) {
+            e.preventDefault();
+
+            const api_key = $('#api_key').val();
+            const api_secret = $('#api_secret').val();
+
+            $.ajax({
+                url: '/api/update_credentials',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({api_key: api_key, api_secret: api_secret}),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        window.location.href = '/login';
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Failed to update credentials');
+                }
+            });
+        });
+
+        // Dashboard functionality
+        {% if action == 'dashboard' %}
+        let botRunning = false;
+        let updateInterval;
+
+        function updateDashboard() {
+            $.get('/api/bot_status', function(data) {
+                // Update index price
+                $('#index-price').text(data.index_ltp ? data.index_ltp.toFixed(2) : '---');
+
+                // Update WebSocket status
+                if (data.kws_connected) {
+                    $('#ws-status').removeClass('badge-warning badge-danger').addClass('badge-success').html('<i class="bi bi-wifi"></i> Connected');
+                } else {
+                    $('#ws-status').removeClass('badge-success badge-warning').addClass('badge-danger').html('<i class="bi bi-wifi-off"></i> Disconnected');
+                }
+
+                // Update trade count
+                $('#trade-count').text(data.trade_count || 0);
+
+                // Update technical indicators
+                if (data.technical) {
+                    $('#ema-fast').text(data.technical.ema_fast ? data.technical.ema_fast.toFixed(2) : '---');
+                    $('#ema-slow').text(data.technical.ema_slow ? data.technical.ema_slow.toFixed(2) : '---');
+                    $('#ema-gap').text(data.ema_gap ? data.ema_gap.toFixed(2) : '---');
+                    $('#rsi-value').text(data.technical.rsi ? data.technical.rsi.toFixed(1) : '---');
+                }
+
+                // Update signal components
+                if (data.signal_components) {
+                    const comp = data.signal_components;
+
+                    // Update scores
+                    $('#ema-score').text(comp.ema_score + '%');
+                    $('#rsi-score').text(comp.rsi_score + '%');
+                    $('#ema-score-bar').css('width', comp.ema_score + '%');
+                    $('#rsi-score-bar').css('width', comp.rsi_score + '%');
+
+                    // Update combined signal
+                    const combinedScore = comp.combined_score;
+                    $('#signal-percentage').text(combinedScore + '%');
+                    $('#signal-bar').css('width', combinedScore + '%');
+                    $('#signal-bar-text').text(combinedScore + '%');
+
+                    // Update signal type and direction
+                    const emaGap = comp.ema_gap;
+                    const signalType = emaGap > 0 ? 'CE (CALL)' : emaGap < 0 ? 'PE (PUT)' : 'NEUTRAL';
+                    const signalColor = emaGap > 0 ? '#198754' : emaGap < 0 ? '#dc3545' : '#6c757d';
+                    $('#signal-type').html(`<span style="color: ${signalColor}">${signalType}</span>`);
+
+                    // Update direction with color coding
+                    let directionText = comp.direction;
+                    let directionColor = '#6c757d';
+                    if (comp.direction && comp.direction.includes('STRONG_CE')) {
+                        directionColor = '#198754';
+                        directionText = 'STRONG CALL';
+                    } else if (comp.direction && comp.direction.includes('STRONG_PE')) {
+                        directionColor = '#dc3545';
+                        directionText = 'STRONG PUT';
+                    } else if (comp.direction === 'CE') {
+                        directionColor = '#20c997';
+                        directionText = 'CALL';
+                    } else if (comp.direction === 'PE') {
+                        directionColor = '#fd7e14';
+                        directionText = 'PUT';
+                    }
+                    $('#signal-direction').html(`<span style="color: ${directionColor}">${directionText}</span>`);
+
+                    // Determine if entry conditions are met
+                    const entryThreshold = 70;
+                    const isEntryPossible = combinedScore >= entryThreshold;
+                    const emaConfirmed = (emaGap > 0 && comp.rsi > 50) || (emaGap < 0 && comp.rsi < 50);
+
+                    if (isEntryPossible && emaConfirmed) {
+                        $('#entry-status').html('<span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> ENTRY SIGNAL</span>');
+                        $('#signal-bar').addClass('pulse');
+                        $('#entry-requirement').html('<span class="text-success">✅ Conditions Met</span>');
+                    } else {
+                        $('#entry-status').html('<span class="text-muted"><i class="bi bi-x-circle"></i> No Entry</span>');
+                        $('#signal-bar').removeClass('pulse');
+
+                        // Show what's missing
+                        let missing = [];
+                        if (!isEntryPossible) missing.push('Strength < 70%');
+                        if (emaGap > 0 && comp.rsi <= 50) missing.push('RSI not > 50 for CALL');
+                        if (emaGap < 0 && comp.rsi >= 50) missing.push('RSI not < 50 for PUT');
+
+                        if (missing.length > 0) {
+                            $('#entry-requirement').html('<span class="text-warning">⚠️ ' + missing.join(', ') + '</span>');
+                        } else {
+                            $('#entry-requirement').html('70%+ with directional confirmation');
+                        }
+                    }
+
+                    // Update progress bar color based on direction
+                    $('#signal-bar').removeClass('positive negative');
+                    if (emaGap > 0) {
+                        $('#signal-bar').addClass('positive');
+                    } else if (emaGap < 0) {
+                        $('#signal-bar').addClass('negative');
+                    }
+                } else {
+                    // Handle case when signal_components is not available
+                    $('#signal-percentage').text('0%');
+                    $('#signal-bar').css('width', '0%');
+                    $('#signal-bar-text').text('0%');
+                    $('#ema-score').text('0%');
+                    $('#rsi-score').text('0%');
+                    $('#ema-score-bar').css('width', '0%');
+                    $('#rsi-score-bar').css('width', '0%');
+                    $('#signal-type').html('<span style="color: #6c757d">NO SIGNAL</span>');
+                    $('#signal-direction').html('<span style="color: #6c757d">NEUTRAL</span>');
+                    $('#entry-status').html('<span class="text-muted"><i class="bi bi-dash-circle"></i> Waiting</span>');
+                    $('#entry-requirement').html('Collecting data...');
+                }
+
+                // Update bot status
+                if (data.is_running) {
+                    $('#bot-status').removeClass('badge-warning badge-danger').addClass('badge-success').text('Running');
+                    $('#start-bot').prop('disabled', true);
+                    $('#stop-bot').prop('disabled', false);
+                    botRunning = true;
+                } else {
+                    $('#bot-status').removeClass('badge-success badge-danger').addClass('badge-warning').text('Stopped');
+                    $('#start-bot').prop('disabled', false);
+                    $('#stop-bot').prop('disabled', true);
+                    botRunning = false;
+                }
+
+                // Update position
+                if (data.position && data.position.buy_price > 0) {
+                    const pnlClass = data.position_pnl >= 0 ? 'text-success' : 'text-danger';
+                    const pnlSign = data.position_pnl >= 0 ? '+' : '';
+
+                    // Calculate distances to SL/TP
+                    const distToSL = data.opt_ltp > 0 ? ((data.opt_ltp - data.position.option_sl) / data.position.option_sl * 100).toFixed(1) : '---';
+                    const distToTP = data.opt_ltp > 0 ? ((data.position.option_tp - data.opt_ltp) / data.opt_ltp * 100).toFixed(1) : '---';
+
+                    let positionHtml = `
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="metric-label">Symbol</span>
+                                <div class="fw-bold">${data.position.sym || 'Unknown'}</div>
+                            </div>
+                            <div class="col-6">
+                                <span class="metric-label">Entry Time</span>
+                                <div class="fw-bold">${data.position.entry_time || '---'}</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-4">
+                                <span class="metric-label">Buy Price</span>
+                                <div class="fw-bold">${data.position.buy_price.toFixed(2)}</div>
+                            </div>
+                            <div class="col-4">
+                                <span class="metric-label">Current LTP</span>
+                                <div class="fw-bold ${pnlClass}">${data.opt_ltp ? data.opt_ltp.toFixed(2) : '---'}</div>
+                            </div>
+                            <div class="col-4">
+                                <span class="metric-label">P&L</span>
+                                <div class="fw-bold pnl-value ${pnlClass}">${pnlSign}₹${Math.abs(data.position_pnl).toFixed(2)} (${pnlSign}${data.position_pnl_percent.toFixed(1)}%)</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="metric-label">Stop Loss</span>
+                                <div class="fw-bold text-danger">${data.position.option_sl.toFixed(2)} <small class="text-muted">(${distToSL}% away)</small></div>
+                            </div>
+                            <div class="col-6">
+                                <span class="metric-label">Take Profit</span>
+                                <div class="fw-bold text-success">${data.position.option_tp.toFixed(2)} <small class="text-muted">(${distToTP}% away)</small></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="metric-label">Peak Price</span>
+                                <div class="fw-bold">${data.position.peak_price.toFixed(2)}</div>
+                            </div>
+                            <div class="col-6">
+                                <span class="metric-label">TSL Status</span>
+                                <div class="fw-bold">${data.position.tsl_activated ?
+                                    '<span class="badge badge-success"><i class="bi bi-check-circle"></i> Active</span>' :
+                                    '<span class="badge badge-warning"><i class="bi bi-clock"></i> Inactive</span>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add progress bar for SL/TP
+                    if (data.opt_ltp > 0) {
+                        const totalRange = data.position.option_tp - data.position.option_sl;
+                        const currentPos = data.opt_ltp - data.position.option_sl;
+                        const progressPercent = Math.max(0, Math.min(100, (currentPos / totalRange * 100))).toFixed(1);
+
+                        positionHtml += `
+                            <hr>
+                            <span class="metric-label">Position Progress</span>
+                            <div class="position-progress">
+                                <div class="position-progress-bar" style="width: ${progressPercent}%;"></div>
+                            </div>
+                            <small class="text-muted">SL (${data.position.option_sl.toFixed(2)}) → TP (${data.position.option_tp.toFixed(2)})</small>
+                        `;
+                    }
+
+                    $('#position-details').html(positionHtml);
+                } else {
+                    $('#position-details').html('<p class="text-muted text-center my-4">No active position</p>');
+                }
+
+                // Update uptime
+                if (data.bot_start_time) {
+                    $('#uptime').text(data.bot_start_time);
+                } else {
+                    $('#uptime').text('---');
+                }
+
+                // Update logs
+                if (data.logs && data.logs.length > 0) {
+                    let logHtml = '';
+                    data.logs.slice().reverse().forEach(log => {
+                        let icon = '';
+                        if (log.type === 'success') icon = '<i class="bi bi-check-circle-fill"></i>';
+                        else if (log.type === 'danger') icon = '<i class="bi bi-exclamation-triangle-fill"></i>';
+                        else if (log.type === 'warning') icon = '<i class="bi bi-exclamation-circle-fill"></i>';
+                        else if (log.type === 'info') icon = '<i class="bi bi-info-circle-fill"></i>';
+
+                        logHtml += `<div class="log-entry">
+                            <span class="log-time">[${log.time}]</span>
+                            <span class="log-${log.type}">${icon} ${log.message}</span>
+                        </div>`;
+                    });
+                    $('#log-area').html(logHtml);
+                    $('#log-area').scrollTop(0);
+                }
+            }).fail(function() {
+                console.log('Failed to fetch bot status');
+            });
+        }
+
+        $('#start-bot').click(function() {
+            $.post('/api/start_bot', function(response) {
+                if (response.status === 'success') {
+                    addLog('Bot started successfully', 'success');
+                    // Clear any existing interval
+                    if (updateInterval) {
+                        clearInterval(updateInterval);
+                    }
+                    // Start fast updates (every 2 seconds)
+                    updateDashboard();
+                    updateInterval = setInterval(updateDashboard, 2000);
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            }).fail(function() {
+                alert('Failed to start bot');
+            });
+        });
+
+        $('#stop-bot').click(function() {
+            $.post('/api/stop_bot', function(response) {
+                if (response.status === 'success') {
+                    addLog('Bot stopped', 'warning');
+                    if (updateInterval) {
+                        clearInterval(updateInterval);
+                    }
+                    // Still update but less frequently
+                    updateDashboard();
+                    updateInterval = setInterval(updateDashboard, 5000);
+                }
+            }).fail(function() {
+                alert('Failed to stop bot');
+            });
+        });
+
+        $('#exit-position').click(function() {
+            if (confirm('Are you sure you want to exit the position?')) {
+                $.post('/api/place_exit_order', function(response) {
+                    if (response.status === 'success') {
+                        addLog(response.message, 'success');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                }).fail(function() {
+                    alert('Failed to place exit order');
+                });
+            }
+        });
+
+        function addLog(message, type) {
+            const time = new Date().toLocaleTimeString();
+            let icon = '';
+            if (type === 'success') icon = '<i class="bi bi-check-circle-fill"></i>';
+            else if (type === 'danger') icon = '<i class="bi bi-exclamation-triangle-fill"></i>';
+            else if (type === 'warning') icon = '<i class="bi bi-exclamation-circle-fill"></i>';
+            else if (type === 'info') icon = '<i class="bi bi-info-circle-fill"></i>';
+
+            const logEntry = `<div class="log-entry">
+                <span class="log-time">[${time}]</span>
+                <span class="log-${type}">${icon} ${message}</span>
+            </div>`;
+            $('#log-area').prepend(logEntry);
+
+            // Keep only last 100 logs in UI
+            if ($('#log-area .log-entry').length > 100) {
+                $('#log-area .log-entry:last').remove();
+            }
+        }
+
+        // Initial update
+        if (window.location.pathname === '/dashboard') {
+            updateDashboard();
+            updateInterval = setInterval(updateDashboard, 5000);
+        }
+        {% endif %}
+
+        // Market status for all pages
+        function checkMarketStatus() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const day = now.getDay();
+
+            let marketStatus = '';
+            let tradingStatus = '';
+            let indicator = '';
+
+            if (day === 0 || day === 6) {
+                marketStatus = '<span class="badge badge-danger"><i class="bi bi-x-circle"></i> CLOSED (Weekend)</span>';
+                tradingStatus = '<span class="badge badge-danger">No Trading</span>';
+                indicator = 'text-danger';
+            } else if (hours < 9 || (hours === 9 && minutes < 15)) {
+                marketStatus = '<span class="badge badge-warning"><i class="bi bi-clock"></i> PRE-OPEN</span>';
+                tradingStatus = '<span class="badge badge-warning">Not Started</span>';
+                indicator = 'text-warning';
+            } else if (hours > 15 || (hours === 15 && minutes > 30)) {
+                marketStatus = '<span class="badge badge-danger"><i class="bi bi-x-circle"></i> CLOSED</span>';
+                tradingStatus = '<span class="badge badge-danger">Closed</span>';
+                indicator = 'text-danger';
+            } else if (hours > 15 || (hours === 15 && minutes > 25)) {
+                marketStatus = '<span class="badge badge-success"><i class="bi bi-check-circle"></i> OPEN</span>';
+                tradingStatus = '<span class="badge badge-warning">Square-off</span>';
+                indicator = 'text-warning';
+            } else if ((hours === 9 && minutes >= 15) || (hours > 9 && hours < 15) || (hours === 15 && minutes <= 25)) {
+                marketStatus = '<span class="badge badge-success"><i class="bi bi-check-circle"></i> OPEN</span>';
+                tradingStatus = '<span class="badge badge-success">Active</span>';
+                indicator = 'text-success';
+            } else {
+                marketStatus = '<span class="badge badge-warning">UNKNOWN</span>';
+                tradingStatus = '<span class="badge badge-warning">Unknown</span>';
+                indicator = 'text-warning';
+            }
+
+            $('#market-status-home, #market-status').html(marketStatus);
+            $('#market-indicator').removeClass().addClass(`bi bi-circle-fill ${indicator}`);
+            $('#trading-status').html(tradingStatus);
+
+            const timeStr = now.toLocaleTimeString();
+            $('#current-time').text(timeStr);
+        }
+
+        checkMarketStatus();
+        setInterval(checkMarketStatus, 1000);
+
+        function showSetup() {
+            window.location.href = '/?setup=true';
+        }
+    </script>
+</body>
+</html>
