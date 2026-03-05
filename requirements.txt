@@ -6,4 +6,5 @@ TA-Lib
 python-dotenv
 requests
 websocket-client
+colorama
 
